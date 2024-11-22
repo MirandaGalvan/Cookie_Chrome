@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { CookieClassifier, CookieType } from './cookieClassifier'
 import './App.css'
 
 interface Cookie {
@@ -9,12 +10,15 @@ interface Cookie {
   expirationDate?: number;
   secure: boolean;
   analysis?: string;
+  type?: CookieType;
+  typeDescription?: string;
 }
 
 function App() {
   const [cookies, setCookies] = useState<Cookie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const classifier = new CookieClassifier();
 
   useEffect(() => {
     getCookies();
@@ -35,10 +39,13 @@ function App() {
       const cookies = await chrome.cookies.getAll({ domain: url.hostname });
       
       const analyzedCookies = cookies.map(cookie => {
-        const purpose = analizarCookie(cookie);
+        const basicAnalysis = analizarCookie(cookie);
+        const detailedAnalysis = classifier.analyzeCookie(cookie.name, cookie.domain);
         return {
           ...cookie,
-          analysis: purpose
+          analysis: basicAnalysis,
+          type: detailedAnalysis.type,
+          typeDescription: classifier.getTypeDescription(detailedAnalysis.type)
         };
       });
 
@@ -50,6 +57,7 @@ function App() {
     }
   };
 
+  // Tu función original de análisis
   const analizarCookie = (cookie: Cookie) => {
     const name = cookie.name.toLowerCase();
     
@@ -75,6 +83,19 @@ function App() {
   const formatDate = (timestamp?: number) => {
     if (!timestamp) return 'No expira';
     return new Date(timestamp * 1000).toLocaleString();
+  };
+
+  const getTypeColor = (type: CookieType) => {
+    switch (type) {
+      case 'Marketing':
+        return 'type-marketing';
+      case 'Analytics':
+        return 'type-analytics';
+      case 'Functional':
+        return 'type-functional';
+      default:
+        return 'type-unknown';
+    }
   };
 
   return (
@@ -130,9 +151,13 @@ function App() {
                     <div className="analysis-content">{cookie.analysis}</div>
                   </div>
 
-                  <div className="value-toggle">
-                    ▾ Ver valor
+                  <div className="cookie-type-section">
+                    <div className="cookie-label">Tipo:</div>
+                    <div className={`cookie-type ${getTypeColor(cookie.type || 'Unknown')}`}>
+                      {cookie.typeDescription}
+                    </div>
                   </div>
+
                 </div>
               ))}
             </div>

@@ -202,3 +202,44 @@ h1 {
   color: #ef4444;
   text-align: center;
 }
+
+
+.spaced {
+  margin-bottom: 20px; /* Ajusta el valor según sea necesario */
+}
+
+/* Estilos para la sección de tipo de cookie con tema de galleta */
+.cookie-type-section {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: #FFF5E6; /* Fondo crema suave */
+}
+
+.cookie-type {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+.type-marketing {
+  background-color: #8B4513; /* Marrón chocolate */
+  color: #FFE4C4; /* Texto beige claro */
+}
+
+.type-analytics {
+  background-color: #D2691E; /* Marrón chocolate claro */
+  color: #FAEBD7; /* Texto beige antiguo */
+}
+
+.type-functional {
+  background-color: #CD853F; /* Marrón arena */
+  color: #FFF8DC; /* Texto crema de maíz */
+}
+
+.type-unknown {
+  background-color: #DEB887; /* Marrón burlywood */
+  color: #5C4033; /* Texto marrón oscuro */
+}
