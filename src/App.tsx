@@ -79,11 +79,11 @@ function App() {
     if (!timestamp) return 'No expira';
     return new Date(timestamp * 1000).toLocaleString();
   };
-
   return (
-    <div className="container p-4 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-blue-600">
+    <div className="container">
+      <h1>
         Analizador de Cookies
+        <span role="img" aria-label="cookie">🍪</span>
       </h1>
 
       {loading ? (
@@ -98,39 +98,36 @@ function App() {
             Se encontraron {cookies.length} cookies en este sitio
           </div>
           
-          <div className="space-y-4">
+          <div className="cookies-list">
             {cookies.map((cookie, index) => (
-              <div key={index} className="bg-white p-4 rounded-lg shadow">
-                <div className="font-bold text-lg">{cookie.name}</div>
+              <div key={index} className="cookie-card">
+                <div className="cookie-header">{cookie.name}</div>
                 
-                <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <span className="font-semibold">Dominio:</span> {cookie.domain}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Ruta:</span> {cookie.path}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Segura:</span> {cookie.secure ? 'Sí' : 'No'}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Expira:</span> {formatDate(cookie.expirationDate)}
-                  </div>
+                <div className="cookie-info">
+                  <span className="cookie-label">Dominio:</span>
+                  <span className="cookie-value">{cookie.domain}</span>
+                  
+                  <span className="cookie-label">Ruta:</span>
+                  <span className="cookie-value">{cookie.path}</span>
+                  
+                  <span className="cookie-label">Segura:</span>
+                  <span className="cookie-value">{cookie.secure ? 'Sí' : 'No'}</span>
+                  
+                  <span className="cookie-label">Expira:</span>
+                  <span className="cookie-value">{formatDate(cookie.expirationDate)}</span>
                 </div>
 
-                <div className="mt-2 text-sm">
-                  <span className="font-semibold">Análisis:</span>
-                  <p className="mt-1 text-blue-600">{cookie.analysis}</p>
+                <div className="analysis-section">
+                  <div className="cookie-label">Análisis:</div>
+                  <div className="cookie-value">{cookie.analysis}</div>
                 </div>
 
-                <div className="mt-2">
-                  <details className="text-xs">
-                    <summary className="cursor-pointer text-gray-600">Ver valor</summary>
-                    <div className="mt-1 p-2 bg-gray-50 rounded break-all">
-                      {cookie.value}
-                    </div>
-                  </details>
-                </div>
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-gray-600">Ver valor</summary>
+                  <div className="mt-1 p-2 bg-gray-50 rounded break-all">
+                    {cookie.value}
+                  </div>
+                </details>
               </div>
             ))}
           </div>
@@ -140,6 +137,4 @@ function App() {
   );
 }
 
-export default App
-
-
+export default App;
