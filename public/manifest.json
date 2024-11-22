@@ -1,21 +1,21 @@
 {
-    "manifest_version": 3,
-    "name": "Analizador de Cookies",
-    "description": "Analiza las cookies de los sitios web",
-    "version": "1.0",
-    "action": {
-      "default_popup": "index.html"
-    },
-    "permissions": [
-      "activeTab",
-      "cookies",
-      "storage"
-    ],
-    "host_permissions": [
-      "http://*/*",
-      "https://*/*"
-    ],
-    "icons": {
-      "48": "cookie-icon.png"
-    }
+  "manifest_version": 3,
+  "name": "Analizador de Cookies",
+  "description": "Analiza las cookies de los sitios web",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "activeTab",
+    "cookies",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "icons": {
+    "48": "cookie-icon.png"
   }
+}

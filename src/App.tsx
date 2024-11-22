@@ -8,6 +8,7 @@ interface Cookie {
   path: string;
   expirationDate?: number;
   secure: boolean;
+  analysis?: string;
 }
 
 function App() {
@@ -21,7 +22,6 @@ function App() {
 
   const getCookies = async () => {
     try {
-   
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const currentTab = tabs[0];
       
@@ -31,13 +31,11 @@ function App() {
         return;
       }
 
-      // Sacamos las cookies de la URL en la que estamos 
       const url = new URL(currentTab.url);
       const cookies = await chrome.cookies.getAll({ domain: url.hostname });
       
-    // analisis de las cookies 
       const analyzedCookies = cookies.map(cookie => {
-        let purpose = analizarCookie(cookie);
+        const purpose = analizarCookie(cookie);
         return {
           ...cookie,
           analysis: purpose
@@ -46,15 +44,14 @@ function App() {
 
       setCookies(analyzedCookies);
       setLoading(false);
-    } catch (err) {
-      setError('Error al obtener las cookies: ' + err.message);
+    } catch (err: any) {
+      setError('Error al obtener las cookies: ' + (err?.message || 'Error desconocido'));
       setLoading(false);
     }
   };
 
   const analizarCookie = (cookie: Cookie) => {
     const name = cookie.name.toLowerCase();
-    
     
     if (name.includes('session') || name.includes('sid')) {
       return 'Cookie de sesión - Mantiene tu estado de inicio de sesión';
@@ -79,61 +76,70 @@ function App() {
     if (!timestamp) return 'No expira';
     return new Date(timestamp * 1000).toLocaleString();
   };
+
   return (
-    <div className="container">
-      <h1>
-        Analizador de Cookies
-        <span role="img" aria-label="cookie">🍪</span>
-      </h1>
+    <>
+      <ul className="circles">
+        {[...Array(10)].map((_, i) => (
+          <li key={i}></li>
+        ))}
+      </ul>
+      
+      <div className="container">
+        <h1>Analizador de Cookies</h1>
 
-      {loading ? (
-        <div className="text-center">Cargando cookies...</div>
-      ) : error ? (
-        <div className="text-red-500">{error}</div>
-      ) : cookies.length === 0 ? (
-        <div className="text-center">No se encontraron cookies en este sitio</div>
-      ) : (
-        <div>
-          <div className="mb-4">
-            Se encontraron {cookies.length} cookies en este sitio
-          </div>
-          
-          <div className="cookies-list">
-            {cookies.map((cookie, index) => (
-              <div key={index} className="cookie-card">
-                <div className="cookie-header">{cookie.name}</div>
-                
-                <div className="cookie-info">
-                  <span className="cookie-label">Dominio:</span>
-                  <span className="cookie-value">{cookie.domain}</span>
+        {loading ? (
+          <div className="text-center">Cargando cookies...</div>
+        ) : error ? (
+          <div className="text-red-500">{error}</div>
+        ) : cookies.length === 0 ? (
+          <div className="text-center">No se encontraron cookies en este sitio</div>
+        ) : (
+          <div>
+            <div className="cookie-count">
+              Se encontraron {cookies.length} cookies en este sitio
+            </div>
+            
+            <div className="cookies-list">
+              {cookies.map((cookie, index) => (
+                <div key={index} className="cookie-card">
+                  <div className="cookie-name">{cookie.name}</div>
                   
-                  <span className="cookie-label">Ruta:</span>
-                  <span className="cookie-value">{cookie.path}</span>
-                  
-                  <span className="cookie-label">Segura:</span>
-                  <span className="cookie-value">{cookie.secure ? 'Sí' : 'No'}</span>
-                  
-                  <span className="cookie-label">Expira:</span>
-                  <span className="cookie-value">{formatDate(cookie.expirationDate)}</span>
-                </div>
-
-                <div className="analysis-section">
-                  <div className="cookie-label">Análisis:</div>
-                  <div className="cookie-value">{cookie.analysis}</div>
-                </div>
-
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-gray-600">Ver valor</summary>
-                  <div className="mt-1 p-2 bg-gray-50 rounded break-all">
-                    {cookie.value}
+                  <div className="cookie-info-row">
+                    <div className="cookie-label">Dominio:</div>
+                    <div className="cookie-value">{cookie.domain}</div>
                   </div>
-                </details>
-              </div>
-            ))}
+                  
+                  <div className="cookie-info-row">
+                    <div className="cookie-label">Ruta:</div>
+                    <div className="cookie-value">{cookie.path}</div>
+                  </div>
+                  
+                  <div className="cookie-info-row">
+                    <div className="cookie-label">Segura:</div>
+                    <div className="cookie-value">{cookie.secure ? 'Sí' : 'No'}</div>
+                  </div>
+                  
+                  <div className="cookie-info-row">
+                    <div className="cookie-label">Expira:</div>
+                    <div className="cookie-value">{formatDate(cookie.expirationDate)}</div>
+                  </div>
+
+                  <div className="analysis-section">
+                    <div className="analysis-title">Análisis:</div>
+                    <div className="analysis-content">{cookie.analysis}</div>
+                  </div>
+
+                  <div className="value-toggle">
+                    ▾ Ver valor
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 
